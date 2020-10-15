@@ -1,33 +1,38 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using Pit.Logs;
 
-namespace pit.Process
+namespace Pit.Process
 {
     public class ProcessRunner
     {
+        private readonly Logger log;
         private readonly ProcessStartInfo startInfo;
+        private string command;
         private string error;
         private string output;
         
-        public ProcessRunner(string command)
+        public ProcessRunner()
         {
             startInfo = new ProcessStartInfo
             {
                 FileName = "pwsh.exe",
-                Arguments = $"/C {command}",
                 RedirectStandardInput = true,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 CreateNoWindow = true,
                 UseShellExecute = false
             };
+            log = new Logger(GetType().Name);
         }
 
-        public string Run()
+        public string Run(string command)
         {
+            this.command = command;
+
             using (System.Diagnostics.Process process = new System.Diagnostics.Process())
             {
                 process.StartInfo = startInfo;
+                process.StartInfo.Arguments = $"/C {command}";
                 process.Start();
                 process.WaitForExit();
                 output = process.StandardOutput.ReadToEnd();
@@ -36,10 +41,15 @@ namespace pit.Process
 
             if (error.Length > 0)
             {
-                throw new Exception(error);
+                throw new CustomProcessException(error);
             }
 
             return output;
+        }
+
+        public void HandleError(string message)
+        {
+            log.Error($"An error occured during the command: {command}", message);
         }
     }
 }
