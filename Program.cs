@@ -1,30 +1,29 @@
 ﻿using System;
-using System.Diagnostics;
+using pit.Process;
 
 namespace pit
 {
     class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            Process process = new Process
+            
+            ProcessRunner runner = new ProcessRunner("git branch && git remote -v");
+
+            string output;
+            
+            try
             {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = "pwsh.exe",
-                    Arguments = "/C git branch && git remote -v && git co update-to-angular10",
-                    RedirectStandardInput = true,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    CreateNoWindow = true,
-                    UseShellExecute = false
-                }
-            };
+                output = runner.Run();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
 
-            process.Start();
-            process.WaitForExit();
 
-            string output = process.StandardOutput.ReadToEnd();
+
             var lines = output.Split('\n');
 
             for (var i = 0; i < lines.Length; i++)
