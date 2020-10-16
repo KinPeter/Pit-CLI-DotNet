@@ -2,7 +2,6 @@
 using System.Linq;
 using Pit.Git;
 using Pit.Logs;
-using Action = Pit.Types.Action;
 
 namespace Pit.Args
 {

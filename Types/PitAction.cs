@@ -2,9 +2,10 @@
 
 namespace Pit.Types
 {
-    public abstract class Action
+    public abstract class PitAction
     {
         private readonly Logger log;
         private readonly string[] args;
+        public abstract void Run();
     }
 }
