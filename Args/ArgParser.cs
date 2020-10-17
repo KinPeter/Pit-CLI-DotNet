@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
+using Pit.Debug;
 using Pit.Git;
+using Pit.Help;
 using Pit.Logs;
 
 namespace Pit.Args
@@ -16,10 +18,16 @@ namespace Pit.Args
 
         public void Parse(string[] args)
         {
-            CheckArgs(args);
+            CheckIfHasArgs(args);
 
             string action = args[0];
             string[] parameters = args.Skip(1).ToArray();
+
+            if (action == "-h" || action == "--help" || action == "help")
+            {
+                ShowHelp();
+                return;
+            }
 
             if (action == "clean")
             {
@@ -27,10 +35,22 @@ namespace Pit.Args
                 return;
             }
 
+            if (action == "debug")
+            {
+                new RepoDebugger(parameters).Run();
+                return;
+            }
+
             NoActionFound();
         }
 
-        private void CheckArgs(string[] args)
+        private void ShowHelp()
+        {
+            new Logger("Pit").Blue("Usage:");
+            Console.WriteLine(HelpText.Main);
+        }
+
+        private void CheckIfHasArgs(string[] args)
         {
             if (args.Length != 0) return;
             log.Error("Not enough arguments!", "Please specify an action");

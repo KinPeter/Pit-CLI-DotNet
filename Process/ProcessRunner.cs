@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using Pit.Logs;
 
 namespace Pit.Process
@@ -27,6 +28,7 @@ namespace Pit.Process
 
         public string Run(string command)
         {
+            output = null;
             lastCommand = command;
 
             using (System.Diagnostics.Process process = new System.Diagnostics.Process())
@@ -42,6 +44,27 @@ namespace Pit.Process
             if (error.Length > 0)
             {
                 throw new CustomProcessException(error);
+            }
+
+            return output;
+        }
+
+        public string RunWithDefault(string command)
+        {
+            output = null;
+            try
+            {
+                output = Run(command);
+            }
+            catch (Exception e)
+            {
+                if (e is CustomProcessException)
+                {
+                    HandleError(e.Message);
+                    Environment.Exit(1);
+                }
+            
+                throw;
             }
 
             return output;

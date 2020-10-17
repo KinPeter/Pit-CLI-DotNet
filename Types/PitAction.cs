@@ -1,4 +1,5 @@
-﻿using Pit.Logs;
+﻿using System;
+using Pit.Logs;
 
 namespace Pit.Types
 {
@@ -12,5 +13,25 @@ namespace Pit.Types
             Args = args;
         }
         public abstract void Run();
+
+        public abstract void ShowHelp();
+
+        protected void HandleMissingParams()
+        {
+            Log.Error(
+                "Not enough parameters!", 
+                "Please specify which action you want to execute. \nRun \"pit <command> --help\" for more info."
+                );
+            Environment.Exit(1);
+        }
+
+        protected void HandleUnknownParam()
+        {
+            Log.Error(
+                "Unknown parameter!", 
+                "Please use valid parameters. \nRun \"pit <command> --help\" for more info."
+                );
+            Environment.Exit(1);
+        }
     }
 }
