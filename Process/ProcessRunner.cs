@@ -7,7 +7,7 @@ namespace Pit.Process
     {
         private readonly Logger log;
         private readonly ProcessStartInfo startInfo;
-        private string command;
+        private string lastCommand;
         private string error;
         private string output;
         
@@ -27,7 +27,7 @@ namespace Pit.Process
 
         public string Run(string command)
         {
-            this.command = command;
+            lastCommand = command;
 
             using (System.Diagnostics.Process process = new System.Diagnostics.Process())
             {
@@ -49,7 +49,7 @@ namespace Pit.Process
 
         public void HandleError(string message)
         {
-            log.Error($"An error occured during the command: {command}", message);
+            log.Error($"An error occured during the command: {lastCommand}", message);
         }
     }
 }

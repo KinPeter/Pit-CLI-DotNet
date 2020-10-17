@@ -16,11 +16,7 @@ namespace Pit.Args
 
         public void Parse(string[] args)
         {
-            if (args.Length == 0)
-            {
-                log.Error("Not enough arguments!", "Please specify an action");
-                Environment.Exit(1);
-            }
+            CheckArgs(args);
 
             string action = args[0];
             string[] parameters = args.Skip(1).ToArray();
@@ -30,7 +26,19 @@ namespace Pit.Args
                 new BranchCleaner(parameters).Run();
                 return;
             }
-            
+
+            NoActionFound();
+        }
+
+        private void CheckArgs(string[] args)
+        {
+            if (args.Length != 0) return;
+            log.Error("Not enough arguments!", "Please specify an action");
+            Environment.Exit(1);
+        }
+
+        private void NoActionFound()
+        {
             log.Error("Invalid action.");
             Environment.Exit(1);
         }

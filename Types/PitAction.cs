@@ -4,8 +4,13 @@ namespace Pit.Types
 {
     public abstract class PitAction
     {
-        private readonly Logger log;
-        private readonly string[] args;
+        protected Logger Log { get; }
+        protected string[] Args { get; }
+        protected PitAction(string module, string[] args)
+        {
+            Log = new Logger(module);
+            Args = args;
+        }
         public abstract void Run();
     }
 }

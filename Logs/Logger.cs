@@ -13,13 +13,24 @@ namespace Pit.Logs
 
         public void Error(string title, string message = null)
         {
-            Console.BackgroundColor = ConsoleColor.DarkRed;
+            WriteWithTwoColors(title, message, ConsoleColor.DarkRed, ConsoleColor.Red);
+        }
+
+        public void Info(string title, string message = null)
+        {
+            WriteWithTwoColors(title, message, ConsoleColor.DarkBlue, ConsoleColor.Blue);
+        }
+
+        private void WriteWithTwoColors(string title, string message, ConsoleColor bgColor,
+            ConsoleColor textColor)
+        {
+            Console.BackgroundColor = bgColor;
             Console.WriteLine($"[{module}] {title}");
             Console.ResetColor();
             
             if (message == null) return;
 
-            Console.ForegroundColor = ConsoleColor.Red;
+            Console.ForegroundColor = textColor;
             Console.WriteLine(message);
             Console.ResetColor();
         }
