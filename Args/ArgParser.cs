@@ -29,7 +29,13 @@ namespace Pit.Args
                 return;
             }
 
-            if (action == "clean")
+            if (action == "review" || action == "rv")
+            {
+                new Reviewer(parameters).Run();
+                return;
+            }
+
+            if (action == "clean" || action == "cl")
             {
                 new BranchCleaner(parameters).Run();
                 return;

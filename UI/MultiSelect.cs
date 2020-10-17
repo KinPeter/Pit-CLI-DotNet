@@ -3,19 +3,11 @@ using System.Collections.Generic;
 
 namespace Pit.UI
 {
-    public class MultiSelect
+    public class MultiSelect : SelectMenu
     {
-        private readonly string description;
-        private readonly string[] menuItems;
-        private int hoveredIndex = 0;
         private readonly HashSet<int> selectedItems = new HashSet<int>();
-        private bool selectionDone = false;
 
-        public MultiSelect(string description, string[] menuItems)
-        {
-            this.description = description;
-            this.menuItems = menuItems;
-        }
+        public MultiSelect(string description, string[] menuItems) : base(description, menuItems) {}
 
         public HashSet<int> Show()
         {
@@ -23,90 +15,56 @@ namespace Pit.UI
             return selectedItems;
         }
 
-        private void StartAndLoop()
-        {
-            int topOffset = Console.CursorTop;
-            int bottomOffset = 0;
-            Console.CursorVisible = false;
-
-            while (!selectionDone)
-            {
-                PrepareConsole();
-
-                for (var i = 0; i < menuItems.Length; i++)
-                {
-                    WriteConsoleItem(i);
-                }
-
-                bottomOffset = Console.CursorTop;
-                ConsoleKeyInfo keyInfo = Console.ReadKey();
-                HandleKeyPress(keyInfo.Key);
-                
-                Console.SetCursorPosition(0, topOffset);
-            }
-            
-            Console.SetCursorPosition(0, bottomOffset + 1);
-            Console.CursorVisible = true;
-        }
-
-        private void PrepareConsole()
-        {
-            Console.Clear();
-            Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine($"{description}\n");
-            Console.ResetColor();
-        }
-
-        private void HandleKeyPress(ConsoleKey key)
+        protected override void HandleKeyPress(ConsoleKey key)
         {
             switch (key)
             {
                 case ConsoleKey.UpArrow:
-                    hoveredIndex = hoveredIndex == 0 ? menuItems.Length - 1 : hoveredIndex - 1;
+                    HoveredIndex = HoveredIndex == 0 ? MenuItems.Length - 1 : HoveredIndex - 1;
                     break;
                 case ConsoleKey.DownArrow:
-                    hoveredIndex = hoveredIndex == menuItems.Length - 1 ? 0 : hoveredIndex + 1;
+                    HoveredIndex = HoveredIndex == MenuItems.Length - 1 ? 0 : HoveredIndex + 1;
                     break;
                 case ConsoleKey.Spacebar:
                     ToggleSelectItem();
                     break;
                 case ConsoleKey.Escape:
                     selectedItems.Clear();
-                    selectionDone = true;
+                    SelectionDone = true;
                     break;
                 case ConsoleKey.Enter:
-                    selectionDone = true;
+                    SelectionDone = true;
                     break;
             }
         }
 
         private void ToggleSelectItem()
         {
-            if (selectedItems.Contains(hoveredIndex))
+            if (selectedItems.Contains(HoveredIndex))
             {
-                selectedItems.Remove(hoveredIndex);
+                selectedItems.Remove(HoveredIndex);
             }
             else
             {
-                selectedItems.Add(hoveredIndex);
+                selectedItems.Add(HoveredIndex);
             }
         }
 
-        private void WriteConsoleItem(int itemIndex)
+        protected override void WriteConsoleItem(int itemIndex)
         {
             if (selectedItems.Contains(itemIndex))
             {
                 Console.ForegroundColor = ConsoleColor.Red;
             }
 
-            if (hoveredIndex == itemIndex)
+            if (HoveredIndex == itemIndex)
             {
                 Console.ForegroundColor = ConsoleColor.Blue;
             }
 
-            string cursor = hoveredIndex == itemIndex ? ">> " : "   ";
+            string cursor = HoveredIndex == itemIndex ? ">> " : "   ";
             string selector = selectedItems.Contains(itemIndex) ? " (*) " : " ( ) ";
-            Console.WriteLine($"{cursor}{selector} {menuItems[itemIndex]}");
+            Console.WriteLine($"{cursor}{selector} {MenuItems[itemIndex]}");
             Console.ResetColor();
         }
     }

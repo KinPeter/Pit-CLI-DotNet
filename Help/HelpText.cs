@@ -6,12 +6,24 @@
 Pit has diferent modules which can be started by running 'pit <module> [<parameters>]'. 
 You can choose from the below modules to run:
 
-  clean                   Branch Cleaner - Deletes local branches in a Git repository.
+  review, rv              Reviewer - Checks out a remote branch for review.
+  clean, cl               Branch Cleaner - Deletes local branches in a Git repository.
   
   help                    Displays this help page.
   debug                   Debug mode, manages a dummy repository.
 
 Run 'pit <command> --help' or 'pit <command> -h' to get more info about each module.
+";
+        
+        public const string Reviewer = @"
+Checks out a remote branch for review.
+
+Without parameters: displays a select menu to choose which remote branches to check out. 
+Press <Enter> after selecting the branch, or <ESC> to cancel and quit. 
+
+Optional parameters: 
+  [string]                Looks for the given string in branch names and checks out the first one
+                          it finds.
 ";
         
         public const string BranchCleaner = @"
