@@ -9,7 +9,7 @@ namespace Pit
     {
         public static void Main(string[] args)
         {
-            // new ArgParser().Parse(args);
+            new ArgParser().Parse(args);
             // string[] menuItems = {"First item", "Second item", "Third item", "Fourth item"};
             // MultiSelect select = new MultiSelect("Select branches to delete:", menuItems);
             // var menuSelection = select.Show();
@@ -20,11 +20,11 @@ namespace Pit
             //     Console.WriteLine(i);
             // }
             
-            string[] menuItems = {"First item", "Second item", "Third item", "Fourth item"};
-            SimpleSelect select = new SimpleSelect("Select a branch:", menuItems);
-            var menuSelection = select.Show();
-            
-            Console.WriteLine($"Selection ({menuSelection}):");
+            // string[] menuItems = {"First item", "Second item", "Third item", "Fourth item"};
+            // SimpleSelect select = new SimpleSelect("Select a branch:", menuItems);
+            // var menuSelection = select.Show();
+            //
+            // Console.WriteLine($"Selection ({menuSelection}):");
 
             // ProcessRunner runner = new ProcessRunner();
             //
