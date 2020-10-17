@@ -1,6 +1,7 @@
 ﻿using System;
 using Pit.Args;
 using Pit.Process;
+using Pit.UI;
 
 namespace Pit
 {
@@ -8,7 +9,17 @@ namespace Pit
     {
         public static void Main(string[] args)
         {
-            new ArgParser().Parse(args);
+            // new ArgParser().Parse(args);
+            string[] menuItems = {"First item", "Second item", "Third item", "Fourth item"};
+            MultiSelect select = new MultiSelect("Select branches to delete:", menuItems);
+            var menuSelection = select.Show();
+
+            Console.WriteLine($"Selection ({menuSelection.Count}):");
+            foreach (int i in menuSelection)
+            {
+                Console.WriteLine(i);
+            }
+
             // ProcessRunner runner = new ProcessRunner();
             //
             // string output;
