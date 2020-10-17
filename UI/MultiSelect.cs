@@ -98,6 +98,12 @@ namespace Pit.UI
             {
                 Console.ForegroundColor = ConsoleColor.Red;
             }
+
+            if (hoveredIndex == itemIndex)
+            {
+                Console.ForegroundColor = ConsoleColor.Blue;
+            }
+
             string cursor = hoveredIndex == itemIndex ? ">> " : "   ";
             string selector = selectedItems.Contains(itemIndex) ? " (*) " : " ( ) ";
             Console.WriteLine($"{cursor}{selector} {menuItems[itemIndex]}");
