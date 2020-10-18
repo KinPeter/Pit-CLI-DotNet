@@ -20,7 +20,7 @@ namespace Pit.Git
                 return;
             }
 
-            GitHelper.CheckIfRepository();
+            GitUtils.CheckIfRepository();
 
             if (Args.Length == 0)
             {
