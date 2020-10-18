@@ -1,6 +1,6 @@
 ﻿namespace Pit.Help
 {
-    public class HelpText
+    public static class HelpText
     {
         public const string Main = @"
 Pit has diferent modules which can be started by running 'pit <module> [<parameters>]'. 
