@@ -39,7 +39,7 @@ namespace Pit.Debug
                 CreateDebugRepo();
                 return;
             }
-            
+
             HandleUnknownParam();
         }
 
@@ -61,33 +61,31 @@ namespace Pit.Debug
             Directory.CreateDirectory(repoPath);
             Directory.SetCurrentDirectory(repoPath);
             ProcessRunner runner = new ProcessRunner();
-            runner.RunWithDefault("git init");
-            runner.RunWithDefault("echo something > file1.txt");
-            runner.RunWithDefault("git add --all && git commit -m \\\"Initial commit\\\"");
-            Log.Green("Created first commit");
-            /* Some git commands returns the success response to StdErr, redirection is required */
-            runner.RunWithDefault("git checkout -b debug/PIT-111-add-some-files 2>&1");
-            runner.RunWithDefault("echo something > file2.txt");
-            runner.RunWithDefault("git add --all && git commit -m \\\"PIT-111: Add some files\\\"");
-            Log.Green("Created second commit and branch");
-            runner.RunWithDefault("git checkout master 2>&1");
-            runner.RunWithDefault("git checkout -b debug/PIT-112-add-more-files 2>&1");
-            runner.RunWithDefault("echo something > file3.txt");
-            runner.RunWithDefault("git add --all && git commit -m \\\"PIT-112: Add more files\\\"");
-            Log.Green("Created third commit and branch");
-            runner.RunWithDefault("git checkout master 2>&1");
-            runner.RunWithDefault("git merge debug/PIT-111-add-some-files");
-            runner.RunWithDefault("git checkout -b debug/PIT-113-modify-a-file 2>&1");
-            runner.RunWithDefault("echo something >> file2.txt");
-            runner.RunWithDefault("git add --all && git commit -m \\\"PIT-113: Modify a file\\\"");
-            Log.Green("Created fourth commit and branch");
-            runner.RunWithDefault("git checkout master 2>&1");
-            runner.RunWithDefault("git merge debug/PIT-113-modify-a-file");
-            runner.RunWithDefault("git checkout -b debug/PIT-114-add-a-file 2>&1");
-            runner.RunWithDefault("echo something > file4.txt");
-            runner.RunWithDefault("git add --all && git commit -m \\\"PIT-114: Add a file\\\"");
-            Log.Green("Created fifth commit and branch");
-            runner.RunWithDefault("git checkout master 2>&1");
+            string[] commands =
+            {
+                "git init",
+                "echo something > file1.txt",
+                "git add --all && git commit -m \"Initial commit\"",
+                "git checkout -b debug/PIT-111-add-some-files 2>&1",
+                "echo something > file2.txt",
+                "git add --all && git commit -m \"PIT-111: Add some files\"",
+                "git checkout master 2>&1",
+                "git checkout -b debug/PIT-112-add-more-files 2>&1",
+                "echo something > file3.txt",
+                "git add --all && git commit -m \"PIT-112: Add more files\"",
+                "git checkout master 2>&1",
+                "git merge debug/PIT-111-add-some-files",
+                "git checkout -b debug/PIT-113-modify-a-file 2>&1",
+                "echo something >> file2.txt",
+                "git add --all && git commit -m \"PIT-113: Modify a file\"",
+                "git checkout master 2>&1",
+                "git merge debug/PIT-113-modify-a-file",
+                "git checkout -b debug/PIT-114-add-a-file 2>&1",
+                "echo something > file4.txt",
+                "git add --all && git commit -m \"PIT-114: Add a file\"",
+                "git checkout master 2>&1"
+            };
+            runner.RunMultiple(commands);
             Log.Green("Done.");
         }
 

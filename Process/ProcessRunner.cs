@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using Pit.Logs;
 
 namespace Pit.Process
@@ -68,6 +69,30 @@ namespace Pit.Process
             }
 
             return output;
+        }
+
+        public void RunMultiple(string[] commands)
+        {
+            string batFileName = "";
+
+            try
+            {
+                string path = AppDomain.CurrentDomain.BaseDirectory;
+                batFileName = path + Guid.NewGuid() + ".bat";
+                using (StreamWriter batFile = new StreamWriter(batFileName))
+                {
+                    foreach (string command in commands)
+                    {
+                        batFile.WriteLine(command);
+                    }
+                }
+
+                RunWithDefault(batFileName);
+            }
+            finally
+            {
+                if (batFileName != "") File.Delete(batFileName);
+            }
         }
 
         public void HandleError(string message)
