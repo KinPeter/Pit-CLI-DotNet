@@ -48,5 +48,15 @@ Parameters:
   delete                  Deletes the existing debug repository directory.
   reset                   Deletes the current debug directory and creates a new one.
 ";
+
+        public const string User = @"
+Gets or sets the global or local (for repository) Git user email according to the given parameters.
+
+Without parameters: Gets the local user email set for the current repository.
+
+Parameters:
+  -g, --global            Gets the global Git user email
+   
+";
     }
 }

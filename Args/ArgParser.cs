@@ -41,6 +41,12 @@ namespace Pit.Args
                 return;
             }
 
+            if (action == "user")
+            {
+                new User(parameters).Run();
+                return;
+            }
+
             if (action == "debug")
             {
                 new RepoDebugger(parameters).Run();
