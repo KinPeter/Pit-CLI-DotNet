@@ -91,7 +91,7 @@ namespace Pit.Process
             }
             finally
             {
-                if (batFileName != "") File.Delete(batFileName);
+                if (File.Exists(batFileName)) File.Delete(batFileName);
             }
         }
 

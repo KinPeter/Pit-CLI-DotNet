@@ -51,7 +51,7 @@ namespace Pit.Debug
         
         private void CreateDebugRepo()
         {
-            string repoPath = $"{Environment.CurrentDirectory}\\PitDebug";
+            string repoPath = Path.Combine(Environment.CurrentDirectory, "PitDebug");
             Log.Info($"Creating debug repo under {repoPath}\\...");
             if (Directory.Exists(repoPath))
             {
@@ -91,7 +91,7 @@ namespace Pit.Debug
 
         private void DeleteDebugRepo()
         {
-            string repoPath = $"{Environment.CurrentDirectory}\\PitDebug";
+            string repoPath = Path.Combine(Environment.CurrentDirectory, "PitDebug");
             if (!Directory.Exists(repoPath))
             {
                 Log.Error("Directory does not exist.");
