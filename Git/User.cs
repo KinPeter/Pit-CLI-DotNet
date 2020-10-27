@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using LibGit2Sharp;
 using Pit.Help;
 using Pit.Types;
@@ -55,8 +56,8 @@ namespace Pit.Git
 
             if (
                 Args.Length == 2 && 
-                (Args[0] == "-g" || Args[0] == "--global") &&
-                (Args[1] == "-p" || Args[1] == "--personal")
+                (Args.Contains("-g") || Args.Contains("--global")) &&
+                (Args.Contains("-p") || Args.Contains("--personal"))
             )
             {
                 SetUser(isGlobal: true, config: UserConfig.Personal);
@@ -64,9 +65,9 @@ namespace Pit.Git
             }
 
             if (
-                Args.Length == 2 && 
-                (Args[0] == "-g" || Args[0] == "--global") &&
-                (Args[1] == "-w" || Args[1] == "--work")
+                Args.Length == 2 &&
+                (Args.Contains("-g") || Args.Contains("--global")) &&
+                (Args.Contains("-w") || Args.Contains("--work"))
             )
             {
                 SetUser(isGlobal: true, config: UserConfig.Work);

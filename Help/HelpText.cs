@@ -55,8 +55,11 @@ Gets or sets the global or local (for repository) Git user email according to th
 Without parameters: Gets the local user email set for the current repository.
 
 Parameters:
-  -g, --global            Gets the global Git user email
-   
-";
+  -g, --global            Sets the config level to Global
+  -p, --personal          Sets the Git user email to the pre-set personal email address
+  -w, --work              Sets the Git user email to the pre-set work email address
+  
+// TODO: Config file explanation
+"; // TODO: Config file explanation
     }
 }
