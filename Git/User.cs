@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using LibGit2Sharp;
+using Pit.Config;
 using Pit.Help;
 using Pit.Types;
 
@@ -14,11 +15,15 @@ namespace Pit.Git
 
     public class User : PitAction
     {
-        // TODO: Use config file for variables
-        private readonly string personalEmail = Environment.GetEnvironmentVariable("PIT_PERSONAL_EMAIL");
-        private readonly string workEmail = Environment.GetEnvironmentVariable("PIT_WORK_EMAIL");
+        private readonly string personalEmail;
+        private readonly string workEmail;
 
-        public User(string[] args) : base("User", args) { }
+        public User(string[] args) : base("User", args)
+        {
+            PitConfig config = new ConfigFile().GetConfig();
+            personalEmail = config.GitUser.PersonalEmail;
+            workEmail = config.GitUser.WorkEmail;
+        }
 
         public override void Run()
         {

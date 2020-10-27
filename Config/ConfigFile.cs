@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Pit.Types;
 
 namespace Pit.Config
@@ -6,17 +7,31 @@ namespace Pit.Config
     public class ConfigFile : PitAction
     {
         public ConfigFile(string[] args) : base("Config", args) { }
+        
+        public ConfigFile() : base("Config", null) { }
 
         public override void Run()
         {
-            string homePath = HomePath;
-            Console.WriteLine($"home: {homePath}");
-            
+            PitConfig config = GetConfig();
+
+            Log.Green($"Git user personal email: {config.GitUser.PersonalEmail}");
+            Log.Green($"Git user work email: {config.GitUser.WorkEmail}");
         }
 
+        public PitConfig GetConfig()
+        {
+            string homePath = HomePath;
+            string configPath = Path.Combine(homePath, ".pitconfig");
+
+            IniReader reader = new IniReader();
+            var dictionary = reader.Read(configPath);
+            
+            return PitConfig.FromDictionary(dictionary);
+        }
+        
         public override void ShowHelp()
         {
-            throw new System.NotImplementedException();
+            Log.Info("Help is not implemented for this module.");
         }
 
         private string HomePath

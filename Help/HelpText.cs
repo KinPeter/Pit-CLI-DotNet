@@ -8,6 +8,7 @@ You can choose from the below modules to run:
 
   review, rv              Reviewer - Checks out a remote branch for review.
   clean, cl               Branch Cleaner - Deletes local branches in a Git repository.
+  user                    Gets/sets Git user email locally or globally.
   
   help                    Displays this help page.
   debug                   Debug mode, manages a dummy repository.
@@ -59,7 +60,13 @@ Parameters:
   -p, --personal          Sets the Git user email to the pre-set personal email address
   -w, --work              Sets the Git user email to the pre-set work email address
   
-// TODO: Config file explanation
-"; // TODO: Config file explanation
+Configuration:
+Create a '.pitconfig' file in your user directory. Use the ini file syntax, and set the values as on
+the example below:
+
+[git_user]
+    personal_email=myemail@gmail.com
+    work_email=myname@mycompany.org
+";
     }
 }
