@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Pit.Config;
 using Pit.Debug;
 using Pit.Git;
 using Pit.Help;
@@ -50,6 +51,12 @@ namespace Pit.Args
             if (action == "debug")
             {
                 new RepoDebugger(parameters).Run();
+                return;
+            }
+
+            if (action == "config")
+            {
+                new ConfigFile(parameters).Run();
                 return;
             }
 
