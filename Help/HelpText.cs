@@ -34,7 +34,7 @@ Without parameters: displays a multiselect menu to choose which local branches t
 select branches, press <Enter> when you're done with the selection, or <ESC> to cancel and quit. 
 
 Optional parameters: 
-  -a, --auto              Deletes all branches except for the current HEAD and master/develop branches.
+  -a, --auto              Deletes all branches except the current HEAD and master/main/develop branches.
   -p, --protect [string]  For auto mode you can set which branches to protect. The passed string can be
                           a comma separated list of identifers, eg. issue numbers. 
                           Example: 'pit clean -a -p 123,124,125'

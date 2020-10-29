@@ -10,6 +10,8 @@ namespace Pit.Git
 {
     public class BranchCleaner : PitAction
     {
+        private readonly string[] defaultProtectedBranches = {"master", "main", "develop"};
+
         public BranchCleaner(string[] args) : base("BranchCleaner", args) { }
 
         public override void Run()
@@ -33,8 +35,8 @@ namespace Pit.Git
                 StartAutoClean();
                 return;
             }
-            
-            if (Args.Length == 3 
+
+            if (Args.Length == 3
                 && (Args[0] == "-a" || Args[0] == "--auto")
                 && (Args[1] == "-p" || Args[1] == "--protect")
                 && Args[2].Length > 0)
@@ -42,7 +44,7 @@ namespace Pit.Git
                 StartAutoClean(Args[2]);
                 return;
             }
-            
+
             HandleUnknownParam();
         }
 
@@ -68,40 +70,42 @@ namespace Pit.Git
                 repo.Branches.Remove(branch);
                 Log.Green($"Deleted branch: {branch.FriendlyName}");
             }
+
             Log.Green("Done.");
         }
 
         private void StartAutoClean(string rawProtected = null)
         {
-            string[] protectedBranches = {};
+            string[] protectedBranches = { };
             if (rawProtected != null)
             {
                 protectedBranches = rawProtected.Split(",");
             }
-            
+
             using Repository repo = new Repository(Environment.CurrentDirectory);
             var deletableBranches = GetDeletableBranches(repo);
 
             foreach (Branch branch in deletableBranches)
             {
-                if (protectedBranches.Length > 0 
+                if (protectedBranches.Length > 0
                     && protectedBranches.Any(n => branch.FriendlyName.Contains(n))
                 )
                 {
                     Log.Blue($"Protected branch: {branch.FriendlyName}");
                     continue;
                 }
+
                 repo.Branches.Remove(branch);
                 Log.Green($"Deleted branch: {branch.FriendlyName}");
             }
+
             Log.Green("Done.");
         }
 
         private List<Branch> GetDeletableBranches(Repository repo)
         {
             var deletableBranches = repo.Branches.Where(
-                b => !b.IsRemote && !b.IsCurrentRepositoryHead && b.FriendlyName != "master" &&
-                     b.FriendlyName != "develop"
+                b => !b.IsRemote && !b.IsCurrentRepositoryHead && !defaultProtectedBranches.Contains(b.FriendlyName)
             ).ToList();
 
             if (deletableBranches.Count == 0)
