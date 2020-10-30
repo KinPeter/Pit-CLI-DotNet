@@ -6,6 +6,7 @@
 Pit has diferent modules which can be started by running 'pit <module> [<parameters>]'. 
 You can choose from the below modules to run:
 
+  checkout, co            Checkout - Checks out a branch.
   review, rv              Reviewer - Checks out a remote branch for review.
   clean, cl               Branch Cleaner - Deletes local branches in a Git repository.
   user                    Gets/sets Git user email locally or globally.
@@ -23,6 +24,23 @@ Without parameters: displays a select menu to choose which remote branches to ch
 Press <Enter> after selecting the branch, or <ESC> to cancel and quit. 
 
 Optional parameters: 
+  [string]                Looks for the given string in branch names and checks out the first one
+                          it finds.
+";
+    
+        
+        public const string Checkout = @"
+Checks out a branch.
+
+Without parameters: displays a select menu to choose which branches to check out. 
+Press <Enter> after selecting the branch, or <ESC> to cancel and quit. 
+
+Shortcut options:
+  com                     Checks out the 'master' or 'main' branch (whichever exists).
+  cod                     Checks out the 'develop' branch. 
+  -r                      Used with the 'com' or 'cod' command, also performs a pull.
+
+Optional parameters for the 'checkout' or 'co' commands: 
   [string]                Looks for the given string in branch names and checks out the first one
                           it finds.
 ";

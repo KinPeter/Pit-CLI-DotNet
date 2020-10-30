@@ -30,6 +30,18 @@ namespace Pit.Args
                 return;
             }
 
+            if (action == "checkout" || action == "co")
+            {
+                new Checkout(parameters).Run();
+                return;
+            }
+
+            if (action == "com" || action == "cod")
+            {
+                new Checkout(parameters).RunShortcut(action);
+                return;
+            }
+
             if (action == "review" || action == "rv")
             {
                 new Reviewer(parameters).Run();

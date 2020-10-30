@@ -7,9 +7,9 @@ using Pit.UI;
 
 namespace Pit.Git
 {
-    public class Reviewer : PitAction
+    public class Checkout : PitAction
     {
-        public Reviewer(string[] args) : base("Reviewer", args) { }
+        public Checkout(string[] args) : base("Checkout", args) { }
 
         public override void Run()
         {
@@ -23,26 +23,68 @@ namespace Pit.Git
 
             if (Args.Length == 0)
             {
-                StartSelectReview();
+                StartSelectCheckout();
                 return;
             }
 
             if (Args.Length == 1)
             {
-                StartReview(Args[0]);
+                StartCheckout(Args[0]);
                 return;
             }
             
             HandleUnknownParam();
         }
 
-        private void StartReview(string arg)
+        public void RunShortcut(string action)
+        {
+            GitUtils.CheckIfRepository();
+            using Repository repo = new Repository(Environment.CurrentDirectory);
+
+            Branch branch;
+
+            try
+            {
+                if (action == "com")
+                {
+                    branch = repo.Branches.First(b =>
+                        !b.IsRemote && (b.FriendlyName.Equals("master") || b.FriendlyName.Equals("main")));
+                }
+                else
+                {
+                    branch = repo.Branches.First(b =>
+                        !b.IsRemote && (b.FriendlyName.Equals("develop")));
+                }
+            }
+            catch (Exception e)
+            {
+                if (e is InvalidOperationException) branch = null;
+                else throw;
+            }
+
+            if (branch == null)
+            {
+                Log.Error("No such branch found.");
+                return;
+            }
+            
+            GitUtils.CheckOutBranch(repo, branch);
+
+            if (Args.Length == 1 && Args[0] == "-r")
+            {
+                GitUtils.PerformPull(branch.FriendlyName);
+                return;
+            }
+            if (Args.Length > 0) HandleUnknownParam();
+        }
+
+        private void StartCheckout(string arg)
         {
             GitUtils.PerformFetch();
             
             using Repository repo = new Repository(Environment.CurrentDirectory);
             var results = repo.Branches
-                .Where(b => b.IsRemote && b.FriendlyName.Contains(arg))
+                .Where(b => b.FriendlyName.Contains(arg))
                 .ToArray();
             
             if (results.Length == 0)
@@ -52,7 +94,7 @@ namespace Pit.Git
             }
             if (results.Length > 1)
             {
-                StartSelectReview(results);
+                StartSelectCheckout(results);
                 return;
             }
 
@@ -60,13 +102,13 @@ namespace Pit.Git
             GitUtils.ShowLatestCommit(repo);
         }
 
-        private void StartSelectReview(Branch[] options = null)
+        private void StartSelectCheckout(Branch[] options = null)
         {
-            var selectDescription = "There were more than one results. Select a branch to review:";
+            var selectDescription = "There were more than one results. Select a branch to check out:";
             
             if (options == null)
             {
-                selectDescription = "Select a branch to review";
+                selectDescription = "Select a branch to check out";
                 GitUtils.PerformFetch();
             }
             using Repository repo = new Repository(Environment.CurrentDirectory);
@@ -92,7 +134,7 @@ namespace Pit.Git
         public override void ShowHelp()
         {
             Log.Info("Usage:");
-            Console.WriteLine(HelpText.Reviewer);
+            Console.WriteLine(HelpText.Checkout);
         }
     }
 }

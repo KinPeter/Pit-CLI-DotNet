@@ -80,5 +80,19 @@ namespace Pit.Git
 
             Console.WriteLine(fetchOutput);
         }
+
+        public static void PerformPull(string branchName)
+        {
+            ProcessRunner runner = new ProcessRunner();
+            Log.Blue($"Pulling from remote 'origin {branchName}'...\n");
+            string pullOutput = runner.RunWithDefault($"git pull origin {branchName} 2>&1");
+            if (pullOutput.Contains("fatal: Could not"))
+            {
+                Log.Error("Couldn't pull.", pullOutput);
+                Environment.Exit(1);
+            }
+
+            Console.WriteLine(pullOutput);
+        }
     }
 }
