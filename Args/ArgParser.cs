@@ -54,6 +54,12 @@ namespace Pit.Args
                 return;
             }
 
+            if (action == "pulo")
+            {
+                new Puller(parameters).Run();
+                return;
+            }
+
             if (action == "user")
             {
                 new User(parameters).Run();

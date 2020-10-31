@@ -9,6 +9,7 @@ You can choose from the below modules to run:
   checkout, co            Checkout - Checks out a branch.
   review, rv              Reviewer - Checks out a remote branch for review.
   clean, cl               Branch Cleaner - Deletes local branches in a Git repository.
+  pulo                    Pulls from origin from the current branch.
   user                    Gets/sets Git user email locally or globally.
   
   help                    Displays this help page.
@@ -56,6 +57,11 @@ Optional parameters:
   -p, --protect [string]  For auto mode you can set which branches to protect. The passed string can be
                           a comma separated list of identifers, eg. issue numbers. 
                           Example: 'pit clean -a -p 123,124,125'
+";        
+        public const string Puller = @"
+Pulls from origin from the branch with the same name as pointed at the current HEAD.
+
+No optional parameters.
 ";
 
         public const string RepoDebugger = @"

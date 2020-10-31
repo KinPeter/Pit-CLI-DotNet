@@ -42,11 +42,7 @@ namespace Pit.Git
             string currentPackageJson = ReadPackageJson();
             ProcessRunner runner = new ProcessRunner();
             string coOutput = runner.RunWithDefault($"git checkout {branchName} 2>&1");
-            if (coOutput.Contains("fatal: Could not"))
-            {
-                Log.Error("Couldn't checkout branch.", coOutput);
-                Environment.Exit(1);
-            }
+            CheckIfError(coOutput, "checkout branch");
             Log.Green($"Changed to branch {branchName}");
             Console.WriteLine(coOutput);
             ComparePackageJsons(currentPackageJson);
@@ -87,12 +83,7 @@ namespace Pit.Git
             ProcessRunner runner = new ProcessRunner();
             Log.Blue("Fetching from remote 'origin'...\n");
             string fetchOutput = runner.RunWithDefault("git fetch 2>&1");
-            if (fetchOutput.Contains("fatal: Could not"))
-            {
-                Log.Error("Couldn't fetch.", fetchOutput);
-                Environment.Exit(1);
-            }
-
+            CheckIfError(fetchOutput, "fetch");
             Console.WriteLine(fetchOutput);
         }
 
@@ -101,13 +92,17 @@ namespace Pit.Git
             ProcessRunner runner = new ProcessRunner();
             Log.Blue($"Pulling from remote 'origin {branchName}'...\n");
             string pullOutput = runner.RunWithDefault($"git pull origin {branchName} 2>&1");
-            if (pullOutput.Contains("fatal: Could not"))
+            CheckIfError(pullOutput, "pull");
+            Console.WriteLine(pullOutput);
+        }
+
+        private static void CheckIfError(string output, string action)
+        {
+            if (output.Contains("fatal: Could not") || output.Contains("fatal: couldn't"))
             {
-                Log.Error("Couldn't pull.", pullOutput);
+                Log.Error($"Couldn't {action}.", output);
                 Environment.Exit(1);
             }
-
-            Console.WriteLine(pullOutput);
         }
     }
 }

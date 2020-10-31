@@ -60,6 +60,7 @@ namespace Pit.Git
             }
 
             GitUtils.CheckOutBranch(repo, branch);
+            GitUtils.ShowLatestCommit(repo);
 
             if (Args.Length == 1 && Args[0] == "-r")
             {
