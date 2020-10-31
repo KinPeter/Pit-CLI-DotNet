@@ -12,7 +12,6 @@ namespace Pit.Types
             Log = new Logger(module);
             Args = args;
         }
-        public abstract void Run();
 
         public abstract void ShowHelp();
 

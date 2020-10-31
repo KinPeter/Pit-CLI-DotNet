@@ -13,7 +13,7 @@ namespace Pit.Git
         Work
     }
 
-    public class User : PitAction
+    public class User : PitAction, IPitActionSync
     {
         private readonly string personalEmail;
         private readonly string workEmail;
@@ -25,7 +25,7 @@ namespace Pit.Git
             workEmail = config.GitUser.WorkEmail;
         }
 
-        public override void Run()
+        public void Run()
         {
             if (Args.Length == 1 && (Args[0] == "-h" || Args[0] == "--help"))
             {

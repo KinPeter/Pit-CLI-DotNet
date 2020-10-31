@@ -7,11 +7,11 @@ using Pit.UI;
 
 namespace Pit.Git
 {
-    public class Reviewer : PitAction
+    public class Reviewer : PitAction, IPitActionSync
     {
         public Reviewer(string[] args) : base("Reviewer", args) { }
 
-        public override void Run()
+        public void Run()
         {
             if (Args.Length == 1 && (Args[0] == "-h" || Args[0] == "--help"))
             {

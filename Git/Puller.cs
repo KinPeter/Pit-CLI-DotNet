@@ -1,16 +1,15 @@
 ﻿using System;
 using LibGit2Sharp;
 using Pit.Help;
-using Pit.Process;
 using Pit.Types;
 
 namespace Pit.Git
 {
-    public class Puller: PitAction
+    public class Puller : PitAction, IPitActionSync
     {
         public Puller(string[] args) : base("Puller", args) { }
-        
-        public override void Run()
+
+        public void Run()
         {
             if (Args.Length == 1 && (Args[0] == "-h" || Args[0] == "--help"))
             {

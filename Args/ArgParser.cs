@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Pit.Config;
 using Pit.Debug;
 using Pit.Git;
 using Pit.Help;
 using Pit.Logs;
+using Pit.Jira;
 
 namespace Pit.Args
 {
@@ -17,7 +19,7 @@ namespace Pit.Args
             log = new Logger(GetType().Name);
         }
 
-        public void Parse(string[] args)
+        public async Task Parse(string[] args)
         {
             CheckIfHasArgs(args);
 
@@ -63,6 +65,12 @@ namespace Pit.Args
             if (action == "user")
             {
                 new User(parameters).Run();
+                return;
+            }
+
+            if (action == "jira")
+            { 
+                await new JiraClient(parameters).RunAsync();
                 return;
             }
 

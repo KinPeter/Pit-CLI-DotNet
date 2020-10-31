@@ -7,11 +7,11 @@ using Pit.UI;
 
 namespace Pit.Git
 {
-    public class Checkout : PitAction
+    public class Checkout : PitAction, IPitActionSync
     {
         public Checkout(string[] args) : base("Checkout", args) { }
 
-        public override void Run()
+        public void Run()
         {
             if (Args.Length == 1 && (Args[0] == "-h" || Args[0] == "--help"))
             {
@@ -143,7 +143,7 @@ namespace Pit.Git
 
         private void CheckoutRemote(Repository repo, Branch branch)
         {
-            Log.Blue($"Only remote found.");
+            Log.Blue("Only remote found.");
             GitUtils.PerformFetch();
             Console.WriteLine();
             GitUtils.CheckOutBranch(GetLocalName(branch));

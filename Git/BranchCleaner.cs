@@ -8,13 +8,13 @@ using Pit.UI;
 
 namespace Pit.Git
 {
-    public class BranchCleaner : PitAction
+    public class BranchCleaner : PitAction, IPitActionSync
     {
         private readonly string[] defaultProtectedBranches = {"master", "main", "develop"};
 
         public BranchCleaner(string[] args) : base("BranchCleaner", args) { }
 
-        public override void Run()
+        public void Run()
         {
             if (Args.Length > 0 && (Args[0] == "-h" || Args[0] == "--help"))
             {

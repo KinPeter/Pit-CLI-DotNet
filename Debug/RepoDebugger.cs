@@ -7,11 +7,11 @@ using Pit.Types;
 
 namespace Pit.Debug
 {
-    public class RepoDebugger: PitAction
+    public class RepoDebugger: PitAction, IPitActionSync
     {
         public RepoDebugger(string[] args) : base("RepoDebugger", args) {}
         
-        public override void Run()
+        public void Run()
         {
             if (Args.Length == 0) HandleMissingParams();
 

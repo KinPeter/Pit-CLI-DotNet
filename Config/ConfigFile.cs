@@ -4,13 +4,13 @@ using Pit.Types;
 
 namespace Pit.Config
 {
-    public class ConfigFile : PitAction
+    public class ConfigFile : PitAction, IPitActionSync
     {
         public ConfigFile(string[] args) : base("Config", args) { }
         
         public ConfigFile() : base("Config", null) { }
 
-        public override void Run()
+        public void Run()
         {
             PitConfig config = GetConfig();
 
