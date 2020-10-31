@@ -1,7 +1,10 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using Pit.Config;
 using Pit.Types;
 
 namespace Pit.Jira
@@ -16,7 +19,21 @@ namespace Pit.Jira
 
     public class JiraClient : PitAction, IPitActionAsync
     {
-        public JiraClient(string[] args) : base("Jira", args) { }
+        private readonly JiraProject config;
+
+        public JiraClient(string[] args) : base("Jira", args)
+        {
+            config = GetConfigForCurrentFolder();
+        }
+
+        private JiraProject GetConfigForCurrentFolder()
+        {
+            PitConfig globalConfig = new ConfigFile().GetConfig();
+            string[] path = Environment.CurrentDirectory.Split(Path.DirectorySeparatorChar);
+            string currentFolder = path[^1];
+            // TODO try catch
+            return globalConfig.JiraProjects.First(p => p.Folders.Contains(currentFolder));
+        }
 
         public async Task RunAsync()
         {

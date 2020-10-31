@@ -11,12 +11,12 @@ namespace Pit.Config
     {
         private readonly Logger log = new Logger("IniReader");
 
-        public Dictionary<string, Dictionary<string, string>> Read(string path)
+        public ConfigDictionary Read(string path)
         {
             try
             {
                 Regex keyRegex = new Regex(@"^\[\w+\]$");
-                var dict = new Dictionary<string, Dictionary<string, string>>();
+                var dict = new ConfigDictionary();
                 var lines = File.ReadAllLines(path);
                 if (lines.Length == 0) throw new Exception("Config file is empty.");
 
