@@ -32,8 +32,23 @@ namespace Pit.Git
         public static void CheckOutBranch(Repository repo, Branch branch)
         {
             string currentPackageJson = ReadPackageJson();
-            Log.Green($"Changing to branch {branch.FriendlyName}");
             Commands.Checkout(repo, branch);
+            Log.Green($"Changed to branch {branch.FriendlyName}");
+            ComparePackageJsons(currentPackageJson);
+        }
+
+        public static void CheckOutBranch(string branchName)
+        {
+            string currentPackageJson = ReadPackageJson();
+            ProcessRunner runner = new ProcessRunner();
+            string coOutput = runner.RunWithDefault($"git checkout {branchName} 2>&1");
+            if (coOutput.Contains("fatal: Could not"))
+            {
+                Log.Error("Couldn't checkout branch.", coOutput);
+                Environment.Exit(1);
+            }
+            Log.Green($"Changed to branch {branchName}");
+            Console.WriteLine(coOutput);
             ComparePackageJsons(currentPackageJson);
         }
 

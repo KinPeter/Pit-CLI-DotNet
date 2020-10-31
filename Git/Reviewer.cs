@@ -76,7 +76,7 @@ namespace Pit.Git
             if (availableBranches.Length < 1)
             {
                 Log.Error("No remote branches found.");
-                Environment.Exit(0);
+                Environment.Exit(1);
             }
 
             string[] branchNames = availableBranches.Select(b => b.FriendlyName).ToArray();

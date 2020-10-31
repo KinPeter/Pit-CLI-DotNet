@@ -32,7 +32,7 @@ namespace Pit.Git
                 StartCheckout(Args[0]);
                 return;
             }
-            
+
             HandleUnknownParam();
         }
 
@@ -45,16 +45,7 @@ namespace Pit.Git
 
             try
             {
-                if (action == "com")
-                {
-                    branch = repo.Branches.First(b =>
-                        !b.IsRemote && (b.FriendlyName.Equals("master") || b.FriendlyName.Equals("main")));
-                }
-                else
-                {
-                    branch = repo.Branches.First(b =>
-                        !b.IsRemote && (b.FriendlyName.Equals("develop")));
-                }
+                branch = repo.Branches.First(b => !b.IsRemote && IsRequiredBranch(action, b));
             }
             catch (Exception e)
             {
@@ -67,7 +58,7 @@ namespace Pit.Git
                 Log.Error("No such branch found.");
                 return;
             }
-            
+
             GitUtils.CheckOutBranch(repo, branch);
 
             if (Args.Length == 1 && Args[0] == "-r")
@@ -75,60 +66,98 @@ namespace Pit.Git
                 GitUtils.PerformPull(branch.FriendlyName);
                 return;
             }
+
             if (Args.Length > 0) HandleUnknownParam();
         }
 
         private void StartCheckout(string arg)
         {
-            GitUtils.PerformFetch();
-            
             using Repository repo = new Repository(Environment.CurrentDirectory);
-            var results = repo.Branches
-                .Where(b => b.FriendlyName.Contains(arg))
-                .ToArray();
-            
-            if (results.Length == 0)
+            Branch branch;
+
+            try
+            {
+                branch = repo.Branches
+                    .OrderBy(b => !b.IsRemote)
+                    .First(b => b.FriendlyName.Contains(arg));
+            }
+            catch (Exception e)
+            {
+                if (e is InvalidOperationException) branch = null;
+                else throw;
+            }
+
+            if (branch == null)
             {
                 Log.Error("No such branch found.");
                 return;
             }
-            if (results.Length > 1)
+
+            if (branch.IsRemote)
             {
-                StartSelectCheckout(results);
+                CheckoutRemote(repo, branch);
                 return;
             }
 
-            GitUtils.CheckOutBranch(repo, results[0]);
+            GitUtils.CheckOutBranch(repo, branch);
             GitUtils.ShowLatestCommit(repo);
         }
 
-        private void StartSelectCheckout(Branch[] options = null)
+        private void StartSelectCheckout()
         {
-            var selectDescription = "There were more than one results. Select a branch to check out:";
-            
-            if (options == null)
-            {
-                selectDescription = "Select a branch to check out";
-                GitUtils.PerformFetch();
-            }
+            const string selectDescription = "Select a branch to check out";
+
             using Repository repo = new Repository(Environment.CurrentDirectory);
 
-            var availableBranches = options ?? repo.Branches.Where(b => b.IsRemote).ToArray();
+            var availableBranches = repo.Branches.OrderBy(b => b.IsRemote).ToArray();
 
             if (availableBranches.Length < 1)
             {
-                Log.Error("No remote branches found.");
-                Environment.Exit(0);
+                Log.Error("No branches found.");
+                Environment.Exit(1);
             }
 
             string[] branchNames = availableBranches.Select(b => b.FriendlyName).ToArray();
-            
+
             int selectedIndex = new SimpleSelect(selectDescription, branchNames).Show();
 
             if (selectedIndex < 0) return;
 
+            if (availableBranches[selectedIndex].IsRemote)
+            {
+                CheckoutRemote(repo, availableBranches[selectedIndex]);
+                return;
+            }
+
             GitUtils.CheckOutBranch(repo, availableBranches[selectedIndex]);
             GitUtils.ShowLatestCommit(repo);
+        }
+
+        private static bool IsRequiredBranch(string action, Branch b)
+        {
+            return action == "com"
+                ? (b.FriendlyName.Equals("master") || b.FriendlyName.Equals("main"))
+                : b.FriendlyName.Equals("develop");
+        }
+
+        private void CheckoutRemote(Repository repo, Branch branch)
+        {
+            Log.Blue($"Only remote found.");
+            GitUtils.PerformFetch();
+            Console.WriteLine();
+            GitUtils.CheckOutBranch(GetLocalName(branch));
+            GitUtils.ShowLatestCommit(repo);
+        }
+
+        private static string GetLocalName(Branch originBranch)
+        {
+            return string.Join(
+                '/',
+                originBranch.FriendlyName
+                    .Split('/')
+                    .Skip(1)
+                    .ToArray()
+            );
         }
 
         public override void ShowHelp()

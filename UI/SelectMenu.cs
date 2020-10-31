@@ -39,7 +39,7 @@ namespace Pit.UI
                 Console.SetCursorPosition(0, topOffset);
             }
             
-            Console.SetCursorPosition(0, bottomOffset + 1);
+            Console.SetCursorPosition(0, Math.Min(bottomOffset + 1, Console.BufferHeight - 1));
             Console.CursorVisible = true;
         }
         
