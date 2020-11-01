@@ -1,10 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Pit.Config;
+using Pit.Http;
 using Pit.Types;
 
 namespace Pit.Jira
@@ -20,47 +19,56 @@ namespace Pit.Jira
     public class JiraClient : PitAction, IPitActionAsync
     {
         private readonly JiraProject config;
+        private readonly string baseUrl;
 
         public JiraClient(string[] args) : base("Jira", args)
         {
             config = GetConfigForCurrentFolder();
-        }
-
-        private JiraProject GetConfigForCurrentFolder()
-        {
-            PitConfig globalConfig = new ConfigFile().GetConfig();
-            string[] path = Environment.CurrentDirectory.Split(Path.DirectorySeparatorChar);
-            string currentFolder = path[^1];
-            // TODO try catch
-            return globalConfig.JiraProjects.First(p => p.Folders.Contains(currentFolder));
+            baseUrl = $"{config.Url}/rest/api/3";
         }
 
         public async Task RunAsync()
         {
-            HttpClient httpClient = new HttpClient();
-
             const string url = "https://jsonplaceholder.typicode.com/todos/1";
+            PitHttp http = new PitHttp("Jira");
+            
+            Data data = await http.Get<Data>(url, JiraUtils.ConstructAuthHeader(config));
 
-            Console.WriteLine("Sending request");
-
-            // HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
-            // HttpResponseMessage res = await httpClient.SendAsync(request);
-
-            HttpResponseMessage res = await httpClient.GetAsync(url);
-
-            Console.WriteLine(res.ToString());
-
-            if (res.IsSuccessStatusCode)
-            {
-                HttpContent content = res.Content;
-                Data data = await content.ReadFromJsonAsync<Data>();
-                Console.WriteLine($"userId: {data.UserId}");
-                Console.WriteLine($"id: {data.Id}");
-                Console.WriteLine($"title: {data.Title}");
-                Console.WriteLine($"completed: {data.Completed}");
-            }
+            Console.WriteLine(JiraUtils.ConstructAuthHeader(config).Value);
+            
+            Console.WriteLine($"userId: {data.UserId}");
+            Console.WriteLine($"id: {data.Id}");
+            Console.WriteLine($"title: {data.Title}");
+            Console.WriteLine($"completed: {data.Completed}");
 
             Console.WriteLine("Done");
+        }
+
+        // private async Task GetIssueByKey(string key)
+        // {
+        //     var url = $"{baseUrl}/issue/{config.Prefix}-{key}";
+        // }
+
+        private JiraProject GetConfigForCurrentFolder()
+        {
+            try
+            {
+                PitConfig globalConfig = new ConfigFile().GetConfig();
+                string[] path = Environment.CurrentDirectory.Split(Path.DirectorySeparatorChar);
+                string currentFolder = path[^1];
+                return globalConfig.JiraProjects.First(p => p.Folders.Contains(currentFolder));
+            }
+            catch (Exception e)
+            {
+                if (e is InvalidOperationException)
+                {
+                    Log.Error("Could not find Jira config for the current folder.");
+                    Environment.Exit(1);
+                }
+                else throw;
+            }
+
+            return null;
         }
 
         public override void ShowHelp()

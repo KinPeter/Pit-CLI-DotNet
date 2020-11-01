@@ -19,19 +19,19 @@ namespace Pit.Config
 
     public class JiraProject
     {
-        public string Name { get; }
+        public string Prefix { get; }
         public string Url { get; }
         public string[] Folders { get; }
         public string User { get; }
-        public string Password { get; }
+        public string ApiToken { get; }
 
-        public JiraProject(string name, string url, string[] folders, string user, string password)
+        public JiraProject(string prefix, string url, string[] folders, string user, string apiToken)
         {
-            Name = name;
+            Prefix = prefix;
             Url = url;
             Folders = folders;
             User = user;
-            Password = password;
+            ApiToken = apiToken;
         }
     }
 
@@ -80,7 +80,7 @@ namespace Pit.Config
 
         private static JiraProject[] GetJiraProjects(ConfigDictionary dictionary)
         {
-            string[] requiredKeys = {"name", "folders", "url", "user", "password"};
+            string[] requiredKeys = {"prefix", "folders", "url", "user", "api_token"};
             var projects = new List<JiraProject>();
             string[] jiraKeys = dictionary.Keys.Where(k => k.StartsWith("jira_")).ToArray();
 
@@ -91,16 +91,16 @@ namespace Pit.Config
                 var jiraDict = dictionary[key];
                 if (!jiraDict.Keys.All(k => requiredKeys.Contains(k)))
                 {
-                    Log.Error($"Required data is missing in config: {jiraDict}");
+                    Log.Error($"Required data is missing in config: {key}");
                     Environment.Exit(1);
                 }
 
                 projects.Add(new JiraProject(
-                    jiraDict["name"],
+                    jiraDict["prefix"],
                     jiraDict["url"],
                     jiraDict["folders"].Split(','),
                     jiraDict["user"],
-                    jiraDict["password"]
+                    jiraDict["api_token"]
                 ));
             }
 
