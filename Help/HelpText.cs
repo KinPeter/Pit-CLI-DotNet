@@ -10,6 +10,7 @@ You can choose from the below modules to run:
   review, rv              Reviewer - Checks out a remote branch for review.
   clean, cl               Branch Cleaner - Deletes local branches in a Git repository.
   pulo                    Pulls from origin from the current branch.
+  jira                    Fetches information about a Jira issue
   user                    Gets/sets Git user email locally or globally.
   
   help                    Displays this help page.
@@ -72,6 +73,25 @@ Parameters:
                           directory.
   delete                  Deletes the existing debug repository directory.
   reset                   Deletes the current debug directory and creates a new one.
+";
+
+        public const string Jira = @"
+Fetches information about a Jira issue from the Jira Cloud API.
+
+Parameters:
+  [number]                The requested issue number
+
+Configuration:
+Create a '.pitconfig' file in your user directory. Use the ini file syntax, and set the values as on
+the example below.
+There can be multiple projects configured, just make sure the project folders are correct.
+
+[jira_name-of-project]
+    prefix=PREFIX
+    folders=folder1,folder2,folder3
+    url=https://my-project.atlassian.net
+    user=username@email.com
+    api_token=MyAtlassianApiToken
 ";
 
         public const string User = @"

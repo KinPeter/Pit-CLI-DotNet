@@ -1,21 +1,16 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Pit.Config;
+using Pit.Help;
 using Pit.Http;
+using Pit.Jira.Types;
 using Pit.Types;
 
 namespace Pit.Jira
 {
-    public class Data
-    {
-        public int UserId { get; set; }
-        public int Id { get; set; }
-        public string Title { get; set; }
-        public bool Completed { get; set; }
-    }
-
     public class JiraClient : PitAction, IPitActionAsync
     {
         private readonly JiraProject config;
@@ -28,26 +23,94 @@ namespace Pit.Jira
         }
 
         public async Task RunAsync()
-        {
-            const string url = "https://jsonplaceholder.typicode.com/todos/1";
-            PitHttp http = new PitHttp("Jira");
-            
-            Data data = await http.Get<Data>(url, JiraUtils.ConstructAuthHeader(config));
+        {            
+            if (Args.Length == 1 && (Args[0] == "-h" || Args[0] == "--help"))
+            {
+                ShowHelp();
+                return;
+            }
 
-            Console.WriteLine(JiraUtils.ConstructAuthHeader(config).Value);
-            
-            Console.WriteLine($"userId: {data.UserId}");
-            Console.WriteLine($"id: {data.Id}");
-            Console.WriteLine($"title: {data.Title}");
-            Console.WriteLine($"completed: {data.Completed}");
+            if (Args.Length == 0)
+            {
+                HandleMissingParams();
+                return;
+            }
 
-            Console.WriteLine("Done");
+            if (Args.Length == 1)
+            {
+                await GetIssueByKey(Args[0]);
+                return;
+            }
+            
+            HandleUnknownParam();
         }
 
-        // private async Task GetIssueByKey(string key)
-        // {
-        //     var url = $"{baseUrl}/issue/{config.Prefix}-{key}";
-        // }
+        private async Task GetIssueByKey(string key)
+        {
+            var url = $"{baseUrl}/issue/{config.Prefix}-{key}";
+            PitHttp http = new PitHttp("Jira");
+            
+            Issue issue = await http.Get<Issue>(url, JiraUtils.ConstructAuthHeader(config));
+
+            WriteIssueToConsole(issue);
+        }
+
+        private void WriteIssueToConsole(Issue issue)
+        {
+            string[] componentNames = issue.Fields.Components.Select(c => c.Name).ToArray();
+            string components = componentNames.Length == 0
+                ? "<none>"
+                : string.Join(", ", componentNames);
+
+            Console.WriteLine();
+            Log.Blue($"{issue.Key}: {issue.Fields.Summary}");
+            WriteWithColors("Type:       ", issue.Fields.IssueType.Name);
+            WriteWithColors("Components: ", components);
+
+            WriteWithColors("\nStatus:     ", issue.Fields.Status.Name);
+
+            if (issue.Fields.Resolution != null)
+            {
+                WriteWithColors("Resolution: ", issue.Fields.Resolution.Name);
+            }
+
+            WriteWithColors("\nReporter:   ", issue.Fields.Reporter.DisplayName);
+
+            if (issue.Fields.Assignee != null)
+            {
+                WriteWithColors("Assignee:   ", issue.Fields.Assignee.DisplayName);
+            }
+
+            WriteWithColors("\nLink:       ", $"{config.Url}/browse/{issue.Key}");
+
+            if (issue.Fields.Parent != null)
+            {
+                WriteWithColors("\nParent:     ", $"{issue.Fields.Parent.Key}: {issue.Fields.Parent.Fields.Summary}");
+                WriteWithColors("Link:       ", $"{config.Url}/browse/{issue.Fields.Parent.Key}");
+            }
+            
+            WriteWithColors("\n\nSuggested:  ", GetSuggestedBranchName(issue));
+        }
+
+        private void WriteWithColors(string str1, string str2)
+        {
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.Write($"\n{str1}");
+            Console.ResetColor();
+            Console.Write(str2);
+        }
+
+        private string GetSuggestedBranchName(Issue issue)
+        {
+            const string specialCharactersRegex = @"[$&+,:;=?¿@#|'<>.^*()%!¡~/`\][{}\\_-]";
+            string branchType = issue.Fields.IssueType.Name == "Bug"
+                ? "bugfix"
+                : "feature";
+            string lowerCaseString = issue.Fields.Summary.ToLower();
+            string withoutSpecials = Regex.Replace(lowerCaseString, specialCharactersRegex, "");
+            string withoutSpaces = withoutSpecials.Replace(" ", "-");
+            return $"{branchType}/{issue.Key}-{withoutSpaces}";
+        }
 
         private JiraProject GetConfigForCurrentFolder()
         {
@@ -73,7 +136,8 @@ namespace Pit.Jira
 
         public override void ShowHelp()
         {
-            throw new System.NotImplementedException();
+            Log.Info("Usage:");
+            Console.WriteLine(HelpText.Jira);
         }
     }
 }

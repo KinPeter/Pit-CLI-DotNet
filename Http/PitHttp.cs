@@ -37,7 +37,7 @@ namespace Pit.Http
             {
                 request.Headers.Add(HttpRequestHeader.ContentType.ToString(), "application/json");
                 request.Headers.Add(HttpRequestHeader.Accept.ToString(), "application/json");
-                
+
                 HttpClient httpClient = new HttpClient();
                 HttpResponseMessage response = await httpClient.SendAsync(request);
 
