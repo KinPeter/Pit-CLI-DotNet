@@ -31,6 +31,7 @@ namespace Pit.Git
             using Repository repo = new Repository(Environment.CurrentDirectory);
             string currentHead = repo.Head.FriendlyName;
             GitUtils.PerformPull(currentHead);
+            GitUtils.ShowLatestCommit(repo);
         }
 
         public override void ShowHelp()

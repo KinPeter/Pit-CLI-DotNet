@@ -65,6 +65,7 @@ namespace Pit.Git
             if (Args.Length == 1 && Args[0] == "-r")
             {
                 GitUtils.PerformPull(branch.FriendlyName);
+                GitUtils.ShowLatestCommit(repo);
                 return;
             }
 
