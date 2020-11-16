@@ -80,7 +80,7 @@ namespace Pit.Git
             try
             {
                 branch = repo.Branches
-                    .OrderBy(b => !b.IsRemote)
+                    .OrderBy(b => b.IsRemote)
                     .First(b => b.FriendlyName.Contains(arg));
             }
             catch (Exception e)
