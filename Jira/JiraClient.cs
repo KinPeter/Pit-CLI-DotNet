@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Pit.Config;
+using Pit.Git;
 using Pit.Help;
 using Pit.Http;
 using Pit.Jira.Types;
@@ -41,11 +42,31 @@ namespace Pit.Jira
                 await GetIssueByKey(Args[0]);
                 return;
             }
-            
+
+            if (Args.Length == 2 && (Args.Contains("-c") || Args.Contains("--create")))
+            {
+                await GetIssueAndCreateBranch(Args);
+                return;
+            }
+
             HandleUnknownParam();
         }
 
-        private async Task GetIssueByKey(string key)
+        private async Task GetIssueAndCreateBranch(string[] args)
+        {
+            try
+            {
+                var issueKey = args.First(a => !a.Contains('c')).ToString();
+                Issue issue = await GetIssueByKey(issueKey);
+                GitUtils.CreateBranch(GetSuggestedBranchName(issue));
+            }
+            catch (Exception)
+            {
+                HandleUnknownParam();
+            }
+        }
+
+        private async Task<Issue> GetIssueByKey(string key)
         {
             var url = $"{baseUrl}/issue/{config.Prefix}-{key}";
             PitHttp http = new PitHttp("Jira");
@@ -53,6 +74,7 @@ namespace Pit.Jira
             Issue issue = await http.Get<Issue>(url, JiraUtils.ConstructAuthHeader(config));
 
             WriteIssueToConsole(issue);
+            return issue;
         }
 
         private void WriteIssueToConsole(Issue issue)
@@ -90,6 +112,7 @@ namespace Pit.Jira
             }
             
             WriteWithColors("\n\nSuggested:  ", GetSuggestedBranchName(issue));
+            Console.WriteLine('\n');
         }
 
         private void WriteWithColors(string str1, string str2)

@@ -81,6 +81,9 @@ Fetches information about a Jira issue from the Jira Cloud API.
 Parameters:
   [number]                The requested issue number
 
+Optional parameters:
+  -c, --create            Creates a new branch with the suggested branch name
+
 Configuration:
 Create a '.pitconfig' file in your user directory. Use the ini file syntax, and set the values as on
 the example below.

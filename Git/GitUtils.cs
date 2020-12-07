@@ -48,6 +48,15 @@ namespace Pit.Git
             ComparePackageJsons(currentPackageJson);
         }
 
+        public static void CreateBranch(string branchName)
+        {
+            Log.Blue($"Creating branch...");
+            ProcessRunner runner = new ProcessRunner();
+            string coOutput = runner.RunWithDefault($"git checkout -b {branchName} 2>&1");
+            CheckIfError(coOutput, "create branch");
+            Console.WriteLine(coOutput);
+        }
+
         private static string ReadPackageJson()
         {
             string pathToPackageJson = Path.Combine(Environment.CurrentDirectory, "package.json");
