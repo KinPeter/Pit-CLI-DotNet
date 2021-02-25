@@ -12,13 +12,22 @@ A command line "toolbox" supporting Git and Jira workflows by some added functio
   - Set pre-defined user info for a repository or globally
 - Jira:
   - Fetch base information about Jira issues by issue number
+  - Create a branch parsing and using the Jira issue title as branch name
 
-## Usage:
+## Usage (Windows):
 - Build the project
 - Add its folder to the PATH
 - Run `pit help` to get started
 
-> As platform only Windows is supported at this point and it might be good to have PowerShell 7+ installed. Maybe one day I'll make it work on Linux too...
+> It might be good to have PowerShell 7+ installed. I haven't tested with lower versions.
+
+## Usage (Linux):
+- Build the project
+- Create an alias in `.bashrc` that will run the app dll with `dotnet`:
+  ```bash
+  alias pit='dotnet ~/path/to/pit.dll'
+  ```
+- Run `pit help` to get started
 
 ## Technologies used:
 - C#

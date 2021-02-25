@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Pit.OS;
 using Pit.Types;
 
 namespace Pit.Config
@@ -38,6 +39,10 @@ namespace Pit.Config
         {
             get
             {
+                if (new Os().IsLinux())
+                {
+                    return Environment.GetEnvironmentVariable("HOME");
+                }
                 string homeDrive = Environment.GetEnvironmentVariable("HOMEDRIVE");
                 string homeFolder = Environment.GetEnvironmentVariable("HOMEPATH");
                 if (string.IsNullOrWhiteSpace(homeDrive) || string.IsNullOrWhiteSpace(homeFolder))

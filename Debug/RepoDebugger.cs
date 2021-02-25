@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using Pit.Help;
+using Pit.OS;
 using Pit.Process;
 using Pit.Types;
 
@@ -106,7 +107,12 @@ namespace Pit.Debug
             if (!positive.Contains(input)) Environment.Exit(0);
 
             ProcessRunner runner = new ProcessRunner();
-            runner.RunWithDefault($"Remove-Item -Recurse -Force {repoPath}");
+            
+            string command = new Os().IsLinux() 
+                ? $"rm -rf {repoPath}" 
+                : $"Remove-Item -Recurse -Force {repoPath}";
+            
+            runner.RunWithDefault(command);
 
             Log.Green("Done.");
         }

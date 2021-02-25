@@ -2,22 +2,25 @@
 using System.Diagnostics;
 using System.IO;
 using Pit.Logs;
+using Pit.OS;
 
 namespace Pit.Process
 {
     public class ProcessRunner
     {
         private readonly Logger log;
+        private readonly Os os;
         private readonly ProcessStartInfo startInfo;
         private string lastCommand;
         private string error;
         private string output;
-        
+
         public ProcessRunner()
         {
+            os = new Os();
             startInfo = new ProcessStartInfo
             {
-                FileName = "pwsh.exe",
+                FileName = os.IsLinux() ? "/bin/bash" : "pwsh.exe",
                 RedirectStandardInput = true,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -32,10 +35,12 @@ namespace Pit.Process
             output = null;
             lastCommand = command;
 
+            string escaped = command.Replace("\"", "\\\"");
+
             using (System.Diagnostics.Process process = new System.Diagnostics.Process())
             {
                 process.StartInfo = startInfo;
-                process.StartInfo.Arguments = $"/C {command}";
+                process.StartInfo.Arguments = os.IsLinux() ? $"-c \"{escaped}\"" : $"/C {command}";
                 process.Start();
                 process.WaitForExit();
                 output = process.StandardOutput.ReadToEnd();
@@ -64,7 +69,7 @@ namespace Pit.Process
                     HandleError(e.Message);
                     Environment.Exit(1);
                 }
-            
+
                 throw;
             }
 
@@ -73,6 +78,16 @@ namespace Pit.Process
 
         public void RunMultiple(string[] commands)
         {
+            if (os.IsLinux())
+            {
+                foreach (string command in commands)
+                {
+                    RunWithDefault(command);
+                }
+
+                return;
+            }
+
             string batFileName = "";
 
             try
